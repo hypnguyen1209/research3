@@ -43,3 +43,5 @@ body {
     color: cmd('cat /flag*');
 }
 ```
+
+Thang điểm: 300/500
