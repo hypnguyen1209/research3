@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div id="app" class="container mt-5">
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-6">
+                <div class="card px-5 py-5" id="form1">
+                    <div class="form-data">
+                        <div class="forms-inputs mb-4">
+                            <input class="form-control" autocomplete="off" type="text" placeholder="username"
+                                v-model="username">
+                        </div>
+                        <div class="forms-inputs mb-4">
+                            <input class="form-control" autocomplete="off" type="password" placeholder="password"
+                                v-model="password">
+                        </div>
+                        <div class="mb-3">
+                            <button @click="login" class="btn btn-dark w-100">Login</button>
+                        </div>
+                        <div class="mb-3">
+                            <button @click="register" class="btn btn-dark w-100">Register</button>
+                        </div>
+                        <div class="alert alert-danger" role="alert" v-if="alert">
+                            {{this.msg}}
+                        </div>
+                        <div class="alert alert-success" role="alert" v-if="success">
+                            {{this.msg}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.41/vue.global.prod.min.js"></script>
+<script>
+    const App = {
+        data() {
+            return {
+                alert: false,
+                success: false,
+                username: '',
+                password: '',
+                msg: ''
+            }
+        },
+        methods: {
+            async fetchData(data) {
+                let req = await fetch('/auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                return await req.json()
+            },
+            async login() {
+                let res = await this.fetchData({
+                    username: this.username,
+                    password: this.password
+                })
+                if (res.status) {
+                    location.href = '/manager'
+                } else {
+                    this.alert = true
+                    this.alert = false
+                    this.msg = res.msg
+                }
+            },
+            async register() {
+                let res = await this.fetchData({
+                    username: this.username,
+                    password: this.password,
+                    register: true
+                })
+                if (res.status) {
+                    this.alert = false
+                    this.success = true
+                    this.msg = res.msg
+                } else {
+                    this.alert = true
+                    this.success = false
+                    this.msg = res.msg
+                }
+            },
+        }
+    }
+    Vue.createApp(App).mount('#app')
+</script>
+
+</html>
